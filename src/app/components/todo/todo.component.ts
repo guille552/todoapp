@@ -1,7 +1,7 @@
-import { Component, computed, effect, OnInit, signal } from '@angular/core';
-import { FilterType, TodoModel } from '../models/todo';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import {Component, computed, effect, OnInit, signal} from '@angular/core';
+import {FilterType, TodoModel} from '../models/todo';
+import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from '@angular/common';
 
 // Definición del componente Angular
 @Component({
@@ -12,7 +12,20 @@ import { CommonModule } from '@angular/common';
   styleUrl: './todo.component.css'
 })
 export class TodoComponent implements OnInit {
-  
+
+  constructor() {
+    effect(() => {
+      localStorage.setItem('todos', JSON.stringify(this.todolist()));
+    })
+  }
+
+  ngOnInit(): void {
+    const storage = localStorage.getItem('todos');
+    if (storage) {
+      this.todolist.set(JSON.parse(storage));
+    }
+  }
+
   // Lista de tareas iniciales utilizando señales (signals) para manejo de estado reactivo
   todolist = signal<TodoModel[]>([]);
 
@@ -22,8 +35,6 @@ export class TodoComponent implements OnInit {
   // Computed property para obtener las tareas filtradas según el filtro actual
 
   todoListFiltered = computed(() => {
-
-    // Si el filtro es 'all', se muestran todas las tareas
 
     const filter = this.filter();
     const todos = this.todolist();
@@ -38,43 +49,25 @@ export class TodoComponent implements OnInit {
     }
   });
 
-  // Controlador de formulario para la nueva tarea
 
   newTodo = new FormControl('', {
     nonNullable: true,
     validators: [Validators.required, Validators.minLength(3)],
   });
 
-  // Constructor del componente
-  constructor() {
-    effect(() => {
-      localStorage.setItem('todos', JSON.stringify(this.todolist()));
-    })
-   }
-
-   // Metodo para inicializar el componente
-  ngOnInit(): void {
-    const storage = localStorage.getItem('todos');
-    if (storage) {
-      this.todolist.set(JSON.parse(storage));
-    }
-  } 
-  // Método para cambiar el filtro de visualización de tareas
 
   changeFilter(filterString: FilterType) {
     this.filter.set(filterString);
   }
 
 
-  // Método para agregar una nueva tarea
-
   addTodo() {
     const newTodoTitle = this.newTodo.value.trim();
 
-    // Validación de la nueva tarea  
+    // Validación de la nueva tarea
 
     if (this.newTodo.valid && newTodoTitle !== '') {
-      this.todolist.update((prev_todos) =>{
+      this.todolist.update((prev_todos) => {
         return [
           ...prev_todos, {
             id: Date.now(),
@@ -84,12 +77,10 @@ export class TodoComponent implements OnInit {
           },
         ];
       });
-      this.newTodo.reset();
     }
-    else{
-      this.newTodo.reset();
-    }
+    this.newTodo.reset();
   }
+
 
   // Método para cambiar el estado de completado de una tarea
   toggleTodo(todoId: number) {
@@ -105,6 +96,7 @@ export class TodoComponent implements OnInit {
       });
     });
   }
+
   removeTodo(todoId: number) {
     this.todolist.update((previousTodos) => {
       return previousTodos.filter((todo) => {
