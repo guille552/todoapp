@@ -1,13 +1,13 @@
 import {Component, computed, effect, OnInit, signal} from '@angular/core';
 import {FilterType, TodoModel} from '../models/todo';
-import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 
 // Definición del componente Angular
 @Component({
   selector: 'app-todo',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })

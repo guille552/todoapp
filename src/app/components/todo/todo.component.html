@@ -1,42 +1,77 @@
-<section class="todolist-wrapper">
-  <h1 class="title">TO DO APP</h1>
-  <div class="new-todo">
-    <input type="text" (keydown.enter)="addTodo()" placeholder="Escribe una nueva tarea" [formControl]="newTodo">
-    <button (click)="addTodo()">+</button>
-  </div>
-  <div class="filters">
-    <!-- Botón para mostrar todas las tareas; llama a changeFilter('all') cuando se hace clic
-         y aplica la clase 'active' si el filtro actual es 'all' -->
-    <button (click)="changeFilter('all')" [class.active]="filter() === 'all'">Todas</button>
+<section class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">TO DO APP</h1>
+  <form class="mb-6" (ngSubmit)="addTodo()" #todoForm="ngForm">
+    <div class="relative">
+      <!-- Input group with proper labeling and aria attributes -->
+      <label for="newTodoInput" class="sr-only">Add new task</label>
+      <input
+        type="text"
+        id="newTodoInput"
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        [formControl]="newTodo"
+        placeholder="Add new task"
+        [attr.aria-invalid]="newTodo.invalid"
+        [attr.aria-describedby]="newTodo.invalid ? 'todoErrors' : null">
 
-    <!-- Botón para mostrar solo las tareas activas; llama a changeFilter('active') cuando se hace clic
-         y aplica la clase 'active' si el filtro actual es 'active' -->
-    <button (click)="changeFilter('active')" [class.active]="filter() === 'active'">Activas</button>
+      <button
+        type="submit"
+        class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="newTodo.invalid"
+        aria-label="Add task">
+        <span class="sr-only">Add task</span>
+        <span aria-hidden="true" class="text-xl">+</span>
+      </button>
+    </div>
 
-    <!-- Botón para mostrar solo las tareas completadas; llama a changeFilter('completed') cuando se hace clic
-         y aplica la clase 'active' si el filtro actual es 'completed' -->
-    <button (click)="changeFilter('completed')" [class.active]="filter() === 'completed'">Completadas</button>
-  </div>
+    <!-- Error messages with proper ARIA support -->
+    <div *ngIf="newTodo.invalid"
+         id="todoErrors"
+         class="mt-2"
+         role="alert"
+         aria-live="polite">
+      <p *ngIf="newTodo.hasError('required')" class="text-red-500 text-sm">
+        Task description is required
+      </p>
+      <p *ngIf="newTodo.hasError('minlength')" class="text-red-500 text-sm">
+        Task description must be at least 3 characters long
+      </p>
+    </div>
+  </form>
 
   {{ filter() }}
-  <ul class="todolist">
+  <ul class="space-y-3">
     @for (todo of todoListFiltered(); track todo.id) {
       @if (todo.editing) {
-        <li class="todo-editing">
-          <input type="text" placeholder="Editar tarea" [value]="todo.title"
-                 (keydown.enter)="updateTodo(todo.id, $event)">
+        <li class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+          <input
+            type="text"
+            placeholder="Edit task"
+            [value]="todo.title"
+            class="flex-1 px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            (keydown.enter)="updateTodo(todo.id, $event)">
         </li>
       } @else {
-        <li class="todo">
-          <input type="checkbox" [checked]="todo.completed" (click)="toggleTodo(todo.id)">
-          <label>{{ todo.title }}</label>
+        <li class="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm hover:shadow transition-shadow">
+          <input
+            type="checkbox"
+            [checked]="todo.completed"
+            (click)="toggleTodo(todo.id)"
+            class="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+          <label class="flex-1 text-gray-700" [class.line-through]="todo.completed">{{ todo.title }}</label>
           @if (!todo.completed) {
-            <button (click)="setTodoAsEditing(todo.id)">Editar</button>
+            <button
+              (click)="setTodoAsEditing(todo.id)"
+              class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
+              Edit
+            </button>
           }
-          <button class="text-red-500" (click)="removeTodo(todo.id)">Eliminar</button>
+          <button
+            (click)="removeTodo(todo.id)"
+            class="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded transition-colors">
+            Delete
+          </button>
         </li>
       }
     }
   </ul>
-
 </section>
