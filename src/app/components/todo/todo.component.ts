@@ -76,10 +76,11 @@ export class TodoComponent implements OnInit {
     if (this.newTodo.valid && newTodoTitle !== '') {
       this.todolist.update((prev_todos) =>{
         return [
-          ...prev_todos,{
-            id:Date.now(),
-            title:newTodoTitle,
-            completed:false
+          ...prev_todos, {
+            id: Date.now(),
+            title: newTodoTitle,
+            completed: false,
+            editing: false
           },
         ];
       });

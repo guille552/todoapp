@@ -10,7 +10,7 @@ export interface TodoModel {
     completed: boolean;
 
     // (Opcional) Indica si la tarea está en modo edición
-    editing?: boolean;
+    editing: boolean;
 }
 
 // Tipo que define las opciones de filtro para la lista de tareas
