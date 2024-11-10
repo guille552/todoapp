@@ -92,29 +92,60 @@ export class TodoComponent implements OnInit {
 
   // Método para cambiar el estado de completado de una tarea
   toggleTodo(todoId: number) {
-    this.todolist.update((prev_todos) => prev_todos.map((todo) => {
-    return todo.id === todoId ? { ...todo, completed: !todo.completed } : todo;}
-    ));
+    this.todolist.update((previousTodos) => {
+      return previousTodos.map((todo) => {
+        if (todo.id === todoId) {
+          return {
+            ...todo,
+            completed: !todo.completed
+          };
+        }
+        return todo;
+      });
+    });
   }
   removeTodo(todoId: number) {
-    this.todolist.update((prev_todos) => prev_todos.filter((todo) => todo.id !== todoId));
+    this.todolist.update((previousTodos) => {
+      return previousTodos.filter((todo) => {
+        return todo.id !== todoId;
+      });
+    });
   }
 
-  // Metodo para editar una tarea
 
-  updateTodo(todoId: number) {
-    return this.todolist.update((prev_todos) => prev_todos.map((todo) => {
-      return todo.id === todoId ? 
-        { ...todo, editing: true } 
-      : { ...todo, editing: false };
-    }));
+  setTodoAsEditing(todoId: number) {
+    this.todolist.update((previousTodos) => {
+      return previousTodos.map((todo) => {
+        if (todo.id === todoId) {
+          return {
+            ...todo,
+            editing: true
+          };
+        }
+
+        return {
+          ...todo
+        };
+      });
+    });
   }
 
-  // Metodo para guardar el titulo de una tarea
-  saveTitleTodo(todoId: number, event: Event) {
-    const Title = (event.target as HTMLInputElement).value;
-    return this.todolist.update((prev_todos) => prev_todos.map((todo) => {
-      return todo.id === todoId ? { ...todo, title: Title, editing: false } : todo;
-    }));
+  updateTodo(todoId: number, event: Event) {
+    const newTitle = (event.target as HTMLInputElement).value;
+
+    return this.todolist.update((previousTodos) => {
+      return previousTodos.map((todo) => {
+        if (todo.id === todoId) {
+          return {
+            ...todo,
+            title: newTitle,
+            editing: false
+          };
+        }
+
+        return todo;
+      });
+    });
   }
+
 }
