@@ -30,7 +30,7 @@
          role="alert"
          aria-live="polite">
       <p *ngIf="newTodo.hasError('required')" class="text-red-500 text-sm">
-        Task description is required
+        Task title is required
       </p>
       <p *ngIf="newTodo.hasError('minlength')" class="text-red-500 text-sm">
         Task description must be at least 3 characters long
