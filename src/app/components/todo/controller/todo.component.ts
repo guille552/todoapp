@@ -1,9 +1,9 @@
-import {Component, computed, effect, OnInit, signal} from '@angular/core';
-import {FilterType, TodoModel} from '../models/todo';
+import {Component, OnInit} from '@angular/core';
+import {FilterType} from '../models/todo';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {TodoService} from '../services/todo.service';
 
-// Definición del componente Angular
 @Component({
   selector: 'app-todo',
   standalone: true,
@@ -13,42 +13,11 @@ import {CommonModule} from '@angular/common';
 })
 export class TodoComponent implements OnInit {
 
-  constructor() {
-    effect(() => {
-      localStorage.setItem('todos', JSON.stringify(this.todolist()));
-    })
+  constructor(private todoService: TodoService) {
   }
 
-  ngOnInit(): void {
-    const storage = localStorage.getItem('todos');
-    if (storage) {
-      this.todolist.set(JSON.parse(storage));
-    }
+  ngOnInit() {
   }
-
-  // Lista de tareas iniciales utilizando señales (signals) para manejo de estado reactivo
-  todolist = signal<TodoModel[]>([]);
-
-  // Estado de filtro actual, utilizado para mostrar diferentes tipos de tareas (ej. todas, completadas, pendientes)
-  filter = signal<FilterType>('all');
-
-  // Computed property para obtener las tareas filtradas según el filtro actual
-
-  todoListFiltered = computed(() => {
-
-    const filter = this.filter();
-    const todos = this.todolist();
-
-    switch (filter) {
-      case 'active':
-        return todos.filter((todo) => !todo.completed);
-      case 'completed':
-        return todos.filter((todo) => todo.completed);
-      default:
-        return todos;
-    }
-  });
-
 
   newTodo = new FormControl('', {
     nonNullable: true,
@@ -57,88 +26,35 @@ export class TodoComponent implements OnInit {
 
 
   changeFilter(filterString: FilterType) {
-    this.filter.set(filterString);
+    this.todoService.changeFilter(filterString);
   }
 
+  filterTodo() {
+    return this.todoService.todoListFiltered();
+  }
 
   addTodo() {
-    const newTodoTitle = this.newTodo.value.trim();
-
-    // Validación de la nueva tarea
-
-    if (this.newTodo.valid && newTodoTitle !== '') {
-      this.todolist.update((prev_todos) => {
-        return [
-          ...prev_todos, {
-            id: Date.now(),
-            title: newTodoTitle,
-            completed: false,
-            editing: false
-          },
-        ];
-      });
+    if (this.newTodo.valid) {
+      this.todoService.addTodo(this.newTodo.value);
+      this.newTodo.reset();
     }
-    this.newTodo.reset();
   }
 
-
-  // Método para cambiar el estado de completado de una tarea
   toggleTodo(todoId: number) {
-    this.todolist.update((previousTodos) => {
-      return previousTodos.map((todo) => {
-        if (todo.id === todoId) {
-          return {
-            ...todo,
-            completed: !todo.completed
-          };
-        }
-        return todo;
-      });
-    });
+    this.todoService.toggleTodo(todoId);
   }
 
   removeTodo(todoId: number) {
-    this.todolist.update((previousTodos) => {
-      return previousTodos.filter((todo) => {
-        return todo.id !== todoId;
-      });
-    });
+    this.todoService.removeTodo(todoId);
   }
 
-
   setTodoAsEditing(todoId: number) {
-    this.todolist.update((previousTodos) => {
-      return previousTodos.map((todo) => {
-        if (todo.id === todoId) {
-          return {
-            ...todo,
-            editing: true
-          };
-        }
-
-        return {
-          ...todo
-        };
-      });
-    });
+    this.todoService.setTodoAsEditing(todoId);
   }
 
   updateTodo(todoId: number, event: Event) {
     const newTitle = (event.target as HTMLInputElement).value;
-
-    return this.todolist.update((previousTodos) => {
-      return previousTodos.map((todo) => {
-        if (todo.id === todoId) {
-          return {
-            ...todo,
-            title: newTitle,
-            editing: false
-          };
-        }
-
-        return todo;
-      });
-    });
+    this.todoService.updateTodo(todoId, newTitle);
   }
 
 }

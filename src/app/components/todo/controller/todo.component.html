@@ -37,10 +37,13 @@
       </p>
     </div>
   </form>
-
-  {{ filter() }}
+  <div class="filters">
+    <button (click)="changeFilter('all')" [class.active]="'all'">Todas</button>
+    <button (click)="changeFilter('active')" [class.active]="'active'">Activas</button>
+    <button (click)="changeFilter('completed')" [class.active]="'completed'">Completadas</button>
+  </div>
   <ul class="space-y-3">
-    @for (todo of todoListFiltered(); track todo.id) {
+    @for (todo of filterTodo(); track todo.id) {
       @if (todo.editing) {
         <li class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
           <input
