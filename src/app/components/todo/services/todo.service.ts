@@ -1,5 +1,5 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
-import { FilterType, TodoModel } from '../models/todo';
+import {Injectable, computed, effect, signal} from '@angular/core';
+import {FilterType, TodoModel} from '../models/todo';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,11 @@ export class TodoService {
   });
 
   constructor() {
+
+    // Effects are rarely needed in most application code, but may be useful in specific circumstances. Here are some examples of situations where an effect might be a good solution:
+    //
+    //     Logging data being displayed and when it changes, either for analytics or as a debugging tool.
+    //     Keeping data in sync with window.localStorage.
     effect(() => {
       localStorage.setItem('todos', JSON.stringify(this.todolist()));
     });
@@ -34,10 +39,6 @@ export class TodoService {
     if (storage) {
       this.todolist.set(JSON.parse(storage));
     }
-  }
-
-  getTodos() {
-    return this.todolist;
   }
 
   changeFilter(filterString: FilterType) {

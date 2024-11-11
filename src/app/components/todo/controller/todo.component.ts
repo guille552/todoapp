@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {FilterType} from '../models/todo';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
@@ -11,13 +11,11 @@ import {TodoService} from '../services/todo.service';
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })
-export class TodoComponent implements OnInit {
+export class TodoComponent  {
 
   constructor(private todoService: TodoService) {
   }
 
-  ngOnInit() {
-  }
 
   newTodo = new FormControl('', {
     nonNullable: true,

@@ -1,1 +1,7 @@
+<ul>
+    <li *ngFor="let route of routes">
+        <a [routerLink]="route.path">{{ route.path }}</a>
+    </li>
+</ul>
+
 <router-outlet></router-outlet>
