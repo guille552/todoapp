@@ -12,6 +12,7 @@ import {TodoService} from '../services/todo.service';
   styleUrl: './todo.component.css'
 })
 export class TodoComponent  {
+  currentFilter: string = 'all';
 
   constructor(private todoService: TodoService) {
   }
@@ -24,6 +25,7 @@ export class TodoComponent  {
 
 
   changeFilter(filterString: FilterType) {
+    this.currentFilter = filterString;
     this.todoService.changeFilter(filterString);
   }
 

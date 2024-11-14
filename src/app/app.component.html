@@ -1,5 +1,5 @@
-<ul>
-    <li *ngFor="let route of routes">
+<ul class="pt-1 flex flex-row justify-center items-center gap-2.5">
+    <li class="border-2 border-black  rounded" *ngFor="let route of routes">
         <a [routerLink]="route.path">{{ route.path }}</a>
     </li>
 </ul>
